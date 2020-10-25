@@ -40,8 +40,10 @@ def main():
             oj[cve_id] = pocs
             # print("{} {}".format(cve_id, pocs))
 
-    with open('cve.json', 'w') as outfile:
+    with open('cve.json', 'w+') as outfile:
+        outfile.truncate(0)
         json.dump(oj, outfile, sort_keys=True, indent=4)
+        outfile.close()
 
 
 if __name__ == '__main__':
