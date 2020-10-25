@@ -1,5 +1,5 @@
+import argparse
 from os import scandir, path
-from git import Repo
 from ruamel import yaml
 import json
 
@@ -22,25 +22,25 @@ def parse_cve_md(b):
 
 
 def main():
-    # git pull to update if local repo already exists, if not clone new repo
-    path_to_repo = "./cvebase.com/"
-    if path.isdir(path_to_repo):
-        repo = Repo(path_to_repo)
-        o = repo.remotes.origin
-        o.pull()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--cvebase-path', required=True, help='path to cvebase.com repo')
+    args = parser.parse_args()
+
+    if path.exists(args.cvebase_path):
+        path_to_cves = path.join(args.cvebase_path, 'cve')
     else:
-        Repo.clone_from("https://github.com/cvebase/cvebase.com.git", path_to_repo, branch='main', depth=1)
+        print('error in path to cvebase.com repo')
+        exit(1)
 
     oj = {}
-    for entry in scantree('./cvebase.com/cve/'):
+    for entry in scantree(path_to_cves):
         with open(entry.path, 'r+') as file:
             cve_id, pocs = parse_cve_md(file.read())
             file.close()
             oj[cve_id] = pocs
             # print("{} {}".format(cve_id, pocs))
 
-    with open('cve.json', 'r+') as outfile:
-        outfile.truncate(0)
+    with open('cve.json', 'w') as outfile:
         json.dump(oj, outfile, sort_keys=True, indent=4)
 
 
