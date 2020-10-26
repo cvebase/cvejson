@@ -14,7 +14,7 @@ def scantree(p):
 
 
 def parse_cve_md(b):
-    y = yaml.load(b.split("---")[1], Loader=yaml.Loader)
+    y = yaml.load(b.split('\n---')[0], Loader=yaml.Loader)
     cve_id = y["id"]
     pocs = [x for x in y["pocs"]]
     pocs.sort()
