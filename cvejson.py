@@ -14,10 +14,12 @@ def scantree(p):
 
 
 def parse_cve_md(b):
+    pocs = []
     y = yaml.load(b.split('\n---')[0], Loader=yaml.Loader)
     cve_id = y["id"]
-    pocs = [x for x in y["pocs"]]
-    pocs.sort()
+    if "pocs" in y:
+        pocs = [x for x in y["pocs"]]
+        pocs.sort()
     return cve_id, pocs
 
 
